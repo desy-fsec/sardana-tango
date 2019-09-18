@@ -1,13 +1,11 @@
-from PyTango import AttrQuality
-from PyTango import AttributeProxy
-from PyTango import DevFailed
+import math
+import time
 
+from tango import AttrQuality, AttributeProxy, DevFailed
 from sardana import State, DataAccess
 from sardana.pool.controller import MotorController
 from sardana.pool.controller import Type, Access, Description
 
-import math
-import time
 
 TANGO_ATTR = 'TangoAttribute'
 FORMULA_READ = 'FormulaRead'

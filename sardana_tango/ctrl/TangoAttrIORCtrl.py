@@ -30,7 +30,7 @@
 ## along with this program; if not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-from PyTango import DevState,DevFailed
+from tango import DevState, DevFailed
 from sardana import State, DataAccess
 from sardana.pool import PoolUtil
 from sardana.pool.controller import IORegisterController

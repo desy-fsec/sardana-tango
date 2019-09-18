@@ -1,11 +1,10 @@
 import math
-import PyTango
-from PyTango import DevState
-from sardana import pool
+import tango
 from sardana.pool import PoolUtil
-from sardana.pool.controller import CounterTimerController, ZeroDController
+from sardana.pool.controller import CounterTimerController, Type, \
+    Description, Access, DataAccess
+from sardana import State
 
-import math
 
 TANGO_ATTR = 'TangoAttribute'
 FORMULA = 'Formula'
@@ -15,20 +14,23 @@ EVALUATED_VALUE = 'Evaluated_value'
 INDEX_READ_ALL = 'Index_read_all'
 
 
-class ReadTangoAttributes():
-    """ Generic class that has as many devices as the user wants.
-    Each device has a tango attribute and a formula and the 'hardware' tango calls
-    are optimized in the sense that only one call per tango device is issued.
+class ReadTangoAttributes:
     """
-    ctrl_extra_attributes ={TANGO_ATTR:
-                            {'Type':'PyTango.DevString'
-                             ,'Description':'The first Tango Attribute to read (e.g. my/tango/dev/attr)'
-                             ,'R/W Type':'PyTango.READ_WRITE'},
-                            FORMULA:
-                            {'Type':'PyTango.DevString'
-                             ,'Description':'The Formula to get the desired value.\ne.g. "math.sqrt(VALUE)"'
-                             ,'R/W Type':'PyTango.READ_WRITE'}
-                            }
+    Generic class that has as many devices as the user wants.
+    Each device has a tango attribute and a formula and the 'hardware' tango
+    calls are optimized in the sense that only one call per tango device is
+    issued.
+    """
+    ctrl_extra_attributes = {
+        TANGO_ATTR: {Type: str,
+                     Description: 'The first Tango Attribute to read (e.g. '
+                                  'my/tango/dev/attr)',
+                     Access: DataAccess.ReadWrite},
+        FORMULA: {Type: str,
+                  Description: 'The Formula to get the desired value.\ne.g. '
+                               '"math.sqrt(VALUE)"',
+                  Access: DataAccess.ReadWrite}
+    }
     
     def __init__(self):
         self.devsExtraAttributes = {}
@@ -48,7 +50,7 @@ class ReadTangoAttributes():
         del self.devsExtraAttributes[axis]
 
     def state_one(self, axis):
-        return (DevState.ON, 'Always ON, just reading external Tango Attribute')
+        return State.On, 'Always ON, just reading external Tango Attribute'
 
     def pre_read_all(self):
         self.devices_to_read = {}
@@ -64,7 +66,7 @@ class ReadTangoAttributes():
 
     def read_all(self):
         try:
-          for dev in list(self.devices_to_read.keys()):
+          for dev in self.devices_to_read:
               attributes = self.devices_to_read[dev]
               values = {}
               try:
@@ -75,7 +77,7 @@ class ReadTangoAttributes():
                   attrs = list(set(attributes))
                   r_values = dev_proxy.read_attributes(attrs)
                   values = dict(list(zip(attrs, r_values)))
-              except PyTango.DevFailed as e:
+              except tango.DevFailed as e:
                   # In case of DeviceServer error
                   for attr in attributes:
                       axis = self.axis_by_tango_attribute[dev+'/'+attr]
@@ -94,7 +96,7 @@ class ReadTangoAttributes():
                         dev_attr_value = values[attr]
                         if dev_attr_value.has_failed:
                             # In case of Attribute error
-                            VALUE = PyTango.DevFailed(*dev_attr_value.get_err_stack())
+                            VALUE = tango.DevFailed(*dev_attr_value.get_err_stack())
                             self.devsExtraAttributes[axis][EVALUATED_VALUE] = VALUE
                         else:
                             formula = self.devsExtraAttributes[axis][FORMULA]
@@ -107,7 +109,7 @@ class ReadTangoAttributes():
 
     def read_one(self, axis):
         value = self.devsExtraAttributes[axis][EVALUATED_VALUE]
-        if isinstance(value, PyTango.DevFailed):
+        if isinstance(value, tango.DevFailed):
             raise value
         return value
 

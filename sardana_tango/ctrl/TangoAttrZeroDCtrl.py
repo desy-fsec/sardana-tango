@@ -1,5 +1,5 @@
 import math
-import PyTango
+import tango
 
 from sardana import State, DataAccess
 from sardana.pool.controller import ZeroDController
@@ -53,7 +53,7 @@ class ReadTangoAttributes():
         del self.devsExtraAttributes[axis]
 
     def state_one(self, axis):
-        return (State.On, 'Always ON, just reading external Tango Attribute')
+        return State.On, 'Always ON, just reading external Tango Attribute'
 
     def pre_read_all(self):
         self.devices_to_read = {}
@@ -73,7 +73,7 @@ class ReadTangoAttributes():
             dev_proxy = PoolUtil().get_device(self.inst_name, dev)
             try:
                 values = dev_proxy.read_attributes(attributes)
-            except PyTango.DevFailed as e:
+            except tango.DevFailed as e:
                 for attr in attributes:
                     axis = self.axis_by_tango_attribute[dev + '/' + attr]
                     self.devsExtraAttributes[axis][EVALUATED_VALUE] = e
@@ -86,7 +86,7 @@ class ReadTangoAttributes():
                 index = attributes.index(attr)
                 dev_attr_value = values[index]
                 if dev_attr_value.has_failed:
-                    VALUE = PyTango.DevFailed(*dev_attr_value.get_err_stack())
+                    VALUE = tango.DevFailed(*dev_attr_value.get_err_stack())
                     self.devsExtraAttributes[axis][EVALUATED_VALUE] = VALUE
                 else:
                     VALUE = float(dev_attr_value.value)
@@ -97,7 +97,7 @@ class ReadTangoAttributes():
 
     def read_one(self, axis):
         value = self.devsExtraAttributes[axis][EVALUATED_VALUE]
-        if isinstance(value, PyTango.DevFailed):
+        if isinstance(value, tango.DevFailed):
             raise value
         return value
 
