@@ -123,7 +123,7 @@ class TangoAttrIORController(IORegisterController):
                          'fget' : 'get%s' % LABELS,
                          'fset' : 'set%s' % LABELS},
                       VALUE:
-                          {Type: int,
+                          {Type: long,
                           Description: 'Value',
                           Access: DataAccess.ReadWrite},
                       }
@@ -150,7 +150,7 @@ class TangoAttrIORController(IORegisterController):
     def StateOne(self, axis):
         tango_attr = self.devsExtraAttributes[axis][TANGO_ATTR]
         try: dev_proxy = self.devsExtraAttributes[axis][DPROXY] or self._buildProxy(axis)
-        except Exception as e: return (State.Init,str(e))
+        except Exception,e: return (State.Init,str(e))
         llabels = len(self.devsExtraAttributes[axis][LABELS])
         lcalibration = len(self.devsExtraAttributes[axis][CALIBRATION])
         readFailed = self.devsExtraAttributes[axis][READFAILED]
@@ -205,7 +205,7 @@ class TangoAttrIORController(IORegisterController):
                 raise Exception("Invalid position.")
             else:
                 raise Exception("Bad configuration on optional extra attributes.")
-        except Exception as e:
+        except Exception,e:
             self._log.error('Exception reading attribute:%s.%s'
                             %(self.devsExtraAttributes[axis][DEVICE],attr))
             try: self.devsExtraAttributes[axis][READFAILED] = True
@@ -240,7 +240,7 @@ class TangoAttrIORController(IORegisterController):
                 calibrated_position = calibration[ior_destination][1]#central element
                 self._log.debug("%s calibrated_position = %s"%(dev,calibrated_position))
                 dev_proxy.write_attribute(attr,calibrated_position)
-        except Exception as e:
+        except Exception, e:
             self._log.error('Exception writing attribute:%s.%s'
                             %(self.devsExtraAttributes[axis][DEVICE],attr))
 
