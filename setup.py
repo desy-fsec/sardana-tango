@@ -14,7 +14,7 @@ packages = ["sardana.PoolController.sardana_tango"]
 provides = ['sardana_tango']
 
 
-setup(name='PoolController',
+setup(name='sardana_tango',
       version=release,
       author="Sardana Controller Developers",
       author_email="fs-ec@desy.de",
