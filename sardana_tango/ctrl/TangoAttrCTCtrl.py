@@ -191,6 +191,9 @@ class TangoAttrCTController(ReadTangoAttributes, CounterTimerController):
         
     def PreStartAll(self):
         pass
+
+    def StartOne(self, axis):
+        pass
     
     def StartAll(self):
         pass
