@@ -263,7 +263,7 @@ class TangoAttrIORController(IORegisterController):
     def _buildProxy(self,axis):
         '''Try to create a device proxy, or return None to mark it (to try when available).'''
         try:
-            return PoolUtil().get_device(self.inst_name, self.devsExtraAttributes[axis][DEVICE])
+            return PoolUtil().get_device(self.GetName(), self.devsExtraAttributes[axis][DEVICE])
         except:
             msg = "Cannot create the proxy for the device %s (axis %d)"%(self.devsExtraAttributes[axis][DEVICE],axis)
             self._log.warn(msg)
