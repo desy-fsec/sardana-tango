@@ -21,7 +21,7 @@ class ReadTangoAttributes:
     calls are optimized in the sense that only one call per tango device is
     issued.
     """
-    ctrl_extra_attributes = {
+    axis_attributes = {
         TANGO_ATTR: {Type: str,
                      Description: 'The first Tango Attribute to read (e.g. '
                                   'my/tango/dev/attr)',
@@ -70,7 +70,7 @@ class ReadTangoAttributes:
               attributes = self.devices_to_read[dev]
               values = {}
               try:
-                  dev_proxy = PoolUtil().get_device(self.inst_name, dev)
+                  dev_proxy = PoolUtil().get_device(self.GetName(), dev)
                   # Set the list to prevent duplicated attr names
                   # Tango raise exception on read_attributes if there are
                   # duplicated attributes
@@ -177,10 +177,10 @@ class TangoAttrCTController(ReadTangoAttributes, CounterTimerController):
     def ReadOne(self, axis):
         return self.read_one(axis)
 
-    def GetExtraAttributePar(self, axis, name):
+    def GetAxisExtraPar(self, axis, name):
         return self.get_extra_attribute_par(axis, name)
 
-    def SetExtraAttributePar(self,axis, name, value):
+    def SetAxisExtraPar(self,axis, name, value):
         self.set_extra_attribute_par(axis, name, value)
         
     def SendToCtrl(self,in_data):
@@ -189,14 +189,14 @@ class TangoAttrCTController(ReadTangoAttributes, CounterTimerController):
     def AbortOne(self, axis):
         pass
         
-    def PreStartAllCT(self):
+    def PreStartAll(self):
+        pass
+
+    def StartOne(self, axis):
         pass
     
-    def StartOneCT(self, axis):
+    def StartAll(self):
         pass
     
-    def StartAllCT(self):
-        pass
-    
-    def LoadOne(self, axis, value):
+    def LoadOne(self, axis, value, repetitions, latency):
         pass
