@@ -1,4 +1,4 @@
-import math
+import math  # noqa: F401
 import tango
 
 from sardana import State, DataAccess
@@ -23,14 +23,14 @@ class ReadTangoAttributes():
     axis_attributes = {
         TANGO_ATTR: {
             Type: str,
-            Description: 'The first Tango Attribute to read'\
-                ' (e.g. my/tango/dev/attr)',
+            Description: 'The first Tango Attribute to read'
+            ' (e.g. my/tango/dev/attr)',
             Access: DataAccess.ReadWrite
         },
-        FORMULA:{
+        FORMULA: {
             Type: str,
-            Description: 'The Formula to get the desired value.\n'\
-                ' e.g. "math.sqrt(VALUE)"',
+            Description: 'The Formula to get the desired value.\n'
+            ' e.g. "math.sqrt(VALUE)"',
             Access: DataAccess.ReadWrite
         }
     }
@@ -77,7 +77,7 @@ class ReadTangoAttributes():
                 for attr in attributes:
                     axis = self.axis_by_tango_attribute[dev + '/' + attr]
                     self.devsExtraAttributes[axis][EVALUATED_VALUE] = e
-            except Exception as e:
+            except Exception:
                 self._log.error('Exception reading attributes:%s.%s' %
                                 (dev, str(attributes)))
             for attr in attributes:
@@ -91,7 +91,7 @@ class ReadTangoAttributes():
                 else:
                     VALUE = float(dev_attr_value.value)
                     # just in case 'VALUE' has been written in lowercase...
-                    value = VALUE
+                    value = VALUE    # noqa: F841
                     self.devsExtraAttributes[axis][
                         EVALUATED_VALUE] = eval(formula)
 

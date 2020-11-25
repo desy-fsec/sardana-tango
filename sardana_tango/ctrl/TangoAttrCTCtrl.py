@@ -1,4 +1,4 @@
-import math
+import math  # noqa: F401
 import tango
 from sardana.pool import PoolUtil
 from sardana.pool.controller import CounterTimerController, Type, \
@@ -31,7 +31,7 @@ class ReadTangoAttributes:
                                '"math.sqrt(VALUE)"',
                   Access: DataAccess.ReadWrite}
     }
-    
+
     def __init__(self):
         self.devsExtraAttributes = {}
         self.axis_by_tango_attribute = {}
@@ -66,46 +66,51 @@ class ReadTangoAttributes:
 
     def read_all(self):
         try:
-          for dev in self.devices_to_read:
-              attributes = self.devices_to_read[dev]
-              values = {}
-              try:
-                  dev_proxy = PoolUtil().get_device(self.GetName(), dev)
-                  # Set the list to prevent duplicated attr names
-                  # Tango raise exception on read_attributes if there are
-                  # duplicated attributes
-                  attrs = list(set(attributes))
-                  r_values = dev_proxy.read_attributes(attrs)
-                  values = dict(list(zip(attrs, r_values)))
-              except tango.DevFailed as e:
-                  # In case of DeviceServer error
-                  for attr in attributes:
-                      axis = self.axis_by_tango_attribute[dev+'/'+attr]
-                      self.devsExtraAttributes[axis][EVALUATED_VALUE] = e
-                  self._log.debug("Exception on read the attribute:%r"%e)
-              except Exception as e:
-                  self._log.error('Exception reading attributes:%s.%s' % (dev,str(attributes)))
-
-              for attr in attributes:
-                  axies = []
-                  for axis, dic in self.devsExtraAttributes.items():
-                      if dic[TANGO_ATTR] == dev+'/'+attr:
-                           axies.append(axis)
-                  for axis in axies:
+            for dev in self.devices_to_read:
+                attributes = self.devices_to_read[dev]
+                values = {}
+                try:
+                    dev_proxy = PoolUtil().get_device(self.GetName(), dev)
+                    # Set the list to prevent duplicated attr names
+                    # Tango raise exception on read_attributes if there are
+                    # duplicated attributes
+                    attrs = list(set(attributes))
+                    r_values = dev_proxy.read_attributes(attrs)
+                    values = dict(list(zip(attrs, r_values)))
+                except tango.DevFailed as e:
+                    # In case of DeviceServer error
+                    for attr in attributes:
+                        axis = self.axis_by_tango_attribute[dev + '/' + attr]
+                        self.devsExtraAttributes[axis][EVALUATED_VALUE] = e
+                    self._log.debug("Exception on read the attribute:%r" % e)
+                except Exception:
+                    self._log.error(
+                        'Exception reading attributes:%s.%s' % (
+                            dev, str(attributes)))
+            for attr in attributes:
+                axies = []
+                for axis, dic in self.devsExtraAttributes.items():
+                    if dic[TANGO_ATTR] == dev + '/' + attr:
+                        axies.append(axis)
+                for axis in axies:
                     if len(values) > 0:
                         dev_attr_value = values[attr]
                         if dev_attr_value.has_failed:
                             # In case of Attribute error
-                            VALUE = tango.DevFailed(*dev_attr_value.get_err_stack())
-                            self.devsExtraAttributes[axis][EVALUATED_VALUE] = VALUE
+                            VALUE = tango.DevFailed(
+                                *dev_attr_value.get_err_stack())
+                            self.devsExtraAttributes[axis][EVALUATED_VALUE] = \
+                                VALUE
                         else:
                             formula = self.devsExtraAttributes[axis][FORMULA]
                             VALUE = float(dev_attr_value.value)
-                            value = VALUE # just in case 'VALUE' has been written in lowercase...
+                            # just in case 'VALUE' has been written
+                            # in lowercase...
+                            value = VALUE  # noqa: F841
                             v = eval(formula)
                             self.devsExtraAttributes[axis][EVALUATED_VALUE] = v
         except Exception as e:
-          self._log.error('Exception on read_all: %r'%e)
+            self._log.error('Exception on read_all: %r' % e)
 
     def read_one(self, axis):
         value = self.devsExtraAttributes[axis][EVALUATED_VALUE]
@@ -116,9 +121,10 @@ class ReadTangoAttributes:
     def get_extra_attribute_par(self, axis, name):
         return self.devsExtraAttributes[axis][name]
 
-    def set_extra_attribute_par(self,axis, name, value):
-        value =  value.lower()
-        self._log.debug('SetExtraAttributePar [%d] %s = %s' % (axis, name, value))
+    def set_extra_attribute_par(self, axis, name, value):
+        value = value.lower()
+        self._log.debug('SetExtraAttributePar [%d] %s = %s' % (
+            axis, name, value))
         self.devsExtraAttributes[axis][name] = value
         if name == TANGO_ATTR:
             idx = value.rfind("/")
@@ -142,14 +148,14 @@ class TangoAttrCTController(ReadTangoAttributes, CounterTimerController):
     ch3.TangoExtraAttribute = 'my_other/tango/device/attribute1'
     ch3.Formula = 'math.cos(VALUE)'
     """
-                 
+
     gender = ""
-    model  = ""
+    model = ""
     organization = "CELLS - ALBA"
     image = ""
     icon = ""
     logo = "ALBA_logo.png"
-                     
+
     MaxDevice = 1024
 
     def __init__(self, inst, props, *args, **kwargs):
@@ -167,7 +173,7 @@ class TangoAttrCTController(ReadTangoAttributes, CounterTimerController):
 
     def PreReadAll(self):
         self.pre_read_all()
-        
+
     def PreReadOne(self, axis):
         self.pre_read_one(axis)
 
@@ -180,23 +186,23 @@ class TangoAttrCTController(ReadTangoAttributes, CounterTimerController):
     def GetAxisExtraPar(self, axis, name):
         return self.get_extra_attribute_par(axis, name)
 
-    def SetAxisExtraPar(self,axis, name, value):
+    def SetAxisExtraPar(self, axis, name, value):
         self.set_extra_attribute_par(axis, name, value)
-        
-    def SendToCtrl(self,in_data):
+
+    def SendToCtrl(self, in_data):
         return ""
-    
+
     def AbortOne(self, axis):
         pass
-        
+
     def PreStartAll(self):
         pass
 
-    def StartOne(self, axis):
+    def StartOne(self, axis, value):
         pass
-    
+
     def StartAll(self):
         pass
-    
+
     def LoadOne(self, axis, value, repetitions, latency):
         pass
