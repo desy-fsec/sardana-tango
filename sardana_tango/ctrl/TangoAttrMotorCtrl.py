@@ -226,10 +226,10 @@ class TangoAttrMotorController(MotorController):
     def StopOne(self, axis):
         pass
 
-    def SetPar(self, axis, name, value):
+    def SetAxisPar(self, axis, name, value):
         self.axisAttributes[axis][name] = value
 
-    def GetPar(self, axis, name):
+    def GetAxisPar(self, axis, name):
         return self.axisAttributes[axis][name]
 
     def GetAxisExtraPar(self, axis, name):
@@ -238,7 +238,7 @@ class TangoAttrMotorController(MotorController):
     def SetAxisExtraPar(self, axis, name, value):
         try:
             self._log.debug(
-                "SetExtraAttributePar [%d] %s = %s" % (axis, name, value))
+                "SetAxisExtraPar [%d] %s = %s" % (axis, name, value))
             self.axisAttributes[axis][name] = value
             if name in [TANGO_ATTR, TANGO_ATTR_ENC]:
                 key = TAU_ATTR
