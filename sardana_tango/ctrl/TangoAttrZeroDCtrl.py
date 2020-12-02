@@ -70,7 +70,7 @@ class ReadTangoAttributes():
     def read_all(self):
         for dev in list(self.devices_to_read.keys()):
             attributes = self.devices_to_read[dev]
-            dev_proxy = PoolUtil().get_device(self.inst_name, dev)
+            dev_proxy = PoolUtil().get_device(self.GetName(), dev)
             try:
                 values = dev_proxy.read_attributes(attributes)
             except tango.DevFailed as e:
