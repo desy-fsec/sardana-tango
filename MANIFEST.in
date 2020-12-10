@@ -1,4 +1,3 @@
 recursive-include python *.py
 
 global-exclude *.pyc .gitignore
-exclude setup.cfg
