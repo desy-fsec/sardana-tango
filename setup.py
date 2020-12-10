@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# import os
-# import imp
 from setuptools import setup
 from datetime import datetime
 
@@ -17,10 +15,10 @@ provides = ['sardana_tango']
 setup(name='sardana_tango',
       version=release,
       author="Sardana Controller Developers",
-      author_email="fs-ec@desy.de",
-      maintainer="DESY",
-      maintainer_email="fs-ec@desy.de",
-      url="https://github.com/desy-fsec/sardana_tango",
+      author_email="sardana-devel@lists.sourceforge.net",
+      maintainer="ALBA",
+      maintainer_email="sardana-devel@lists.sourceforge.net",
+      url="https://github.com/ALBA-Synchrotron/sardana-tango",
       packages=packages,
       package_dir=package_dir,
       include_package_data=True,
