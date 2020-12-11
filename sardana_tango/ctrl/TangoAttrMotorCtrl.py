@@ -152,7 +152,7 @@ class TangoAttrMotorController(MotorController):
             # SHOULD DEAL ALSO ABOUT LIMITS
             switch_state = 0
             return (state, status, switch_state)
-        except Exception as e:
+        except Exception, e:
             self._log.error(" (%d) error getting state: %s" % (axis, str(e)))
             return (State.Alarm, "Exception: %s" % str(e), 0)
 
@@ -181,7 +181,7 @@ class TangoAttrMotorController(MotorController):
             value = VALUE
             evaluated_value = eval(formula)
             return evaluated_value
-        except Exception as e:
+        except Exception, e:
             self._log.error("(%d) error reading: %s" % (axis, str(e)))
             raise e
 
@@ -209,13 +209,13 @@ class TangoAttrMotorController(MotorController):
                         self.axisAttributes[axis][TANGO_ATTR_ENC_SPEED]
                 self.axisAttributes[axis][
                     MOVE_TIMEOUT] = time.time() + move_time
-            except Exception as e:
+            except Exception, e:
                 self._log.error(
                     "(%d) error calculating time to wait: %s" % (axis, str(e)))
 
             tau_attr.write(evaluated_value)
 
-        except Exception as e:
+        except Exception, e:
             self._log.error("(%d) error writing: %s" % (axis, str(e)))
 
     def StartAll(self):
@@ -247,16 +247,16 @@ class TangoAttrMotorController(MotorController):
                     key = TAU_ATTR_ENC
                 try:
                     self.axisAttributes[axis][key] = AttributeProxy(value)
-                except Exception as e:
+                except Exception, e:
                     self.axisAttributes[axis][key] = None
                     raise e
-        except DevFailed as df:
+        except DevFailed, df:
             de = df[0]
             self._log.error("SetExtraAttribute DevFailed: (%s) %s" %
                             (de.reason, de.desc))
             self._log.error("SetExtraAttribute DevFailed: %s" % str(df))
             #raise df
-        except Exception as e:
+        except Exception, e:
             self._log.error("SetExtraAttribute Exception: %s" % str(e))
             #raise e
 

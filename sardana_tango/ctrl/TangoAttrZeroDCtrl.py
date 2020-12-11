@@ -61,23 +61,23 @@ class ReadTangoAttributes():
     def pre_read_one(self, axis):
         dev = self.devsExtraAttributes[axis][DEVICE]
         attr = self.devsExtraAttributes[axis][ATTRIBUTE]
-        if dev not in self.devices_to_read:
+        if not self.devices_to_read.has_key(dev):
             self.devices_to_read[dev] = []
         self.devices_to_read[dev].append(attr)
         index = self.devices_to_read[dev].index(attr)
         self.devsExtraAttributes[axis][INDEX_READ_ALL] = index
 
     def read_all(self):
-        for dev in list(self.devices_to_read.keys()):
+        for dev in self.devices_to_read.keys():
             attributes = self.devices_to_read[dev]
             dev_proxy = PoolUtil().get_device(self.inst_name, dev)
             try:
                 values = dev_proxy.read_attributes(attributes)
-            except PyTango.DevFailed as e:
+            except PyTango.DevFailed, e:
                 for attr in attributes:
                     axis = self.axis_by_tango_attribute[dev + '/' + attr]
                     self.devsExtraAttributes[axis][EVALUATED_VALUE] = e
-            except Exception as e:
+            except Exception, e:
                 self._log.error('Exception reading attributes:%s.%s' %
                                 (dev, str(attributes)))
             for attr in attributes:

@@ -56,7 +56,7 @@ class ReadTangoAttributes():
     def pre_read_one(self, axis):
         dev = self.devsExtraAttributes[axis][DEVICE]
         attr = self.devsExtraAttributes[axis][ATTRIBUTE]
-        if dev not in self.devices_to_read:
+        if not self.devices_to_read.has_key(dev):
             self.devices_to_read[dev] = []
         self.devices_to_read[dev].append(attr)
         index = self.devices_to_read[dev].index(attr)
@@ -64,7 +64,7 @@ class ReadTangoAttributes():
 
     def read_all(self):
         try:
-          for dev in list(self.devices_to_read.keys()):
+          for dev in self.devices_to_read.keys():
               attributes = self.devices_to_read[dev]
               values = {}
               try:
@@ -74,19 +74,19 @@ class ReadTangoAttributes():
                   # duplicated attributes
                   attrs = list(set(attributes))
                   r_values = dev_proxy.read_attributes(attrs)
-                  values = dict(list(zip(attrs, r_values)))
-              except PyTango.DevFailed as e:
+                  values = dict(zip(attrs, r_values))
+              except PyTango.DevFailed, e:
                   # In case of DeviceServer error
                   for attr in attributes:
                       axis = self.axis_by_tango_attribute[dev+'/'+attr]
                       self.devsExtraAttributes[axis][EVALUATED_VALUE] = e
                   self._log.debug("Exception on read the attribute:%r"%e)
-              except Exception as e:
+              except Exception,e:
                   self._log.error('Exception reading attributes:%s.%s' % (dev,str(attributes)))
 
               for attr in attributes:
                   axies = []
-                  for axis, dic in self.devsExtraAttributes.items():
+                  for axis, dic in self.devsExtraAttributes.iteritems():
                       if dic[TANGO_ATTR] == dev+'/'+attr:
                            axies.append(axis)
                   for axis in axies:
