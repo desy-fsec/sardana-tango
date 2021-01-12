@@ -67,6 +67,7 @@ class ReadTangoAttributes():
         index = self.devices_to_read[dev].index(attr)
         self.devsExtraAttributes[axis][INDEX_READ_ALL] = index
 
+    # TODO create a base clase for the ZeroD and CT controllers
     def read_all(self):
         try:
             for dev in list(self.devices_to_read.keys()):
