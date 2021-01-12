@@ -1,4 +1,4 @@
-import math
+import math  # noqa: F401
 import tango
 
 from sardana import State, DataAccess
@@ -23,14 +23,14 @@ class ReadTangoAttributes():
     axis_attributes = {
         TANGO_ATTR: {
             Type: str,
-            Description: 'The first Tango Attribute to read'\
-                ' (e.g. my/tango/dev/attr)',
+            Description: 'The first Tango Attribute to read'
+            ' (e.g. my/tango/dev/attr)',
             Access: DataAccess.ReadWrite
         },
-        FORMULA:{
+        FORMULA: {
             Type: str,
-            Description: 'The Formula to get the desired value.\n'\
-                ' e.g. "math.sqrt(VALUE)"',
+            Description: 'The Formula to get the desired value.\n'
+            ' e.g. "math.sqrt(VALUE)"',
             Access: DataAccess.ReadWrite
         }
     }
@@ -89,7 +89,7 @@ class ReadTangoAttributes():
                 except Exception as e:
                     self._log.error('Exception reading attributes:%s.%s' %
                                     (dev, str(attributes)))
-            
+
             for attr in attributes:
                   axies = []
                   for axis, dic in self.devsExtraAttributes.items():
@@ -121,7 +121,7 @@ class ReadTangoAttributes():
         return self.devsExtraAttributes[axis][name]
 
     def set_axis_extra_par(self, axis, name, value):
-        value =  value.lower()
+        value = value.lower()
         self._log.debug(
             'set_axis_extra_par [%d] %s = %s' % (axis, name, value))
         self.devsExtraAttributes[axis][name] = value
@@ -132,7 +132,6 @@ class ReadTangoAttributes():
             self.devsExtraAttributes[axis][DEVICE] = dev
             self.devsExtraAttributes[axis][ATTRIBUTE] = attr
             self.axis_by_tango_attribute[value] = axis
-                    
 
 
 class TangoAttrZeroDController(ReadTangoAttributes, ZeroDController):
@@ -193,18 +192,18 @@ class TangoAttrZeroDController(ReadTangoAttributes, ZeroDController):
 
     def SendToCtrl(self, in_data):
         return ""
-    
+
     def AbortOne(self, axis):
         pass
-        
+
     def PreStartAll(self):
         pass
 
     def StartOne(self, axis):
         pass
-    
+
     def StartAll(self):
         pass
-    
+
     def LoadOne(self, axis, value, repetitions, latency):
         pass
