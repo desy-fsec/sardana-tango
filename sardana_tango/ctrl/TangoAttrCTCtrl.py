@@ -87,28 +87,30 @@ class ReadTangoAttributes:
                     self._log.error(
                         'Exception reading attributes:%s.%s' % (
                             dev, str(attributes)))
-            for attr in attributes:
-                axies = []
-                for axis, dic in self.devsExtraAttributes.items():
-                    if dic[TANGO_ATTR] == dev + '/' + attr:
-                        axies.append(axis)
-                for axis in axies:
-                    if len(values) > 0:
-                        dev_attr_value = values[attr]
-                        if dev_attr_value.has_failed:
-                            # In case of Attribute error
-                            VALUE = tango.DevFailed(
-                                *dev_attr_value.get_err_stack())
-                            self.devsExtraAttributes[axis][EVALUATED_VALUE] = \
-                                VALUE
-                        else:
-                            formula = self.devsExtraAttributes[axis][FORMULA]
-                            VALUE = float(dev_attr_value.value)
-                            # just in case 'VALUE' has been written
-                            # in lowercase...
-                            value = VALUE  # noqa: F841
-                            v = eval(formula)
-                            self.devsExtraAttributes[axis][EVALUATED_VALUE] = v
+                for attr in attributes:
+                    axies = []
+                    for axis, dic in self.devsExtraAttributes.items():
+                        if dic[TANGO_ATTR] == dev + '/' + attr:
+                            axies.append(axis)
+                    for axis in axies:
+                        if len(values) > 0:
+                            dev_attr_value = values[attr]
+                            self._log.debug("For attribute %s axis %d [%s]"
+                                            % (str(attr), axis, str(dev_attr_value)))
+                            if dev_attr_value.has_failed:
+                                # In case of Attribute error
+                                VALUE = tango.DevFailed(
+                                    *dev_attr_value.get_err_stack())
+                                self.devsExtraAttributes[axis][EVALUATED_VALUE] = \
+                                    VALUE
+                            else:
+                                formula = self.devsExtraAttributes[axis][FORMULA]
+                                VALUE = float(dev_attr_value.value)
+                                # just in case 'VALUE' has been written
+                                # in lowercase...
+                                value = VALUE  # noqa: F841
+                                v = eval(formula)
+                                self.devsExtraAttributes[axis][EVALUATED_VALUE] = v
         except Exception as e:
             self._log.error('Exception on read_all: %r' % e)
 
